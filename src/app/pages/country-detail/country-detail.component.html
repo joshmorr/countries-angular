@@ -1,0 +1,97 @@
+@if (loading()) {
+  <div class="loading">Loading...</div>
+} @else if (country()) {
+  <div class="detail-container">
+    <button
+      type="button"
+      class="back-button"
+      (click)="goBack()"
+      aria-label="Go back to home"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="back-icon"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <span>Back</span>
+    </button>
+
+    <div class="country-detail-content">
+      <img
+        [src]="country()!.flags.png"
+        [alt]="country()!.name + ' flag'"
+        class="country-flag-large"
+        loading="lazy"
+      />
+
+      <div class="country-detail-info">
+        <h1 class="country-title">{{ country()!.name }}</h1>
+
+        <div class="country-details-grid">
+          <div class="details-column">
+            <p class="detail-row">
+              <span class="detail-label">Native Name:</span>
+              <span class="detail-value">{{ countryDetails()!.nativeName }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Population:</span>
+              <span class="detail-value">{{ countryDetails()!.population }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Region:</span>
+              <span class="detail-value">{{ countryDetails()!.region }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Sub Region:</span>
+              <span class="detail-value">{{ countryDetails()!.subRegion }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Capital:</span>
+              <span class="detail-value">{{ countryDetails()!.capital }}</span>
+            </p>
+          </div>
+
+          <div class="details-column">
+            <p class="detail-row">
+              <span class="detail-label">Top Level Domain:</span>
+              <span class="detail-value">{{ countryDetails()!.topLevelDomain }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Currencies:</span>
+              <span class="detail-value">{{ countryDetails()!.currencies }}</span>
+            </p>
+            <p class="detail-row">
+              <span class="detail-label">Languages:</span>
+              <span class="detail-value">{{ countryDetails()!.languages }}</span>
+            </p>
+          </div>
+        </div>
+
+        @if (borderCountries().length > 0) {
+          <div class="border-countries">
+            <span class="border-label">Border Countries:</span>
+            <div class="border-buttons">
+              @for (borderCountry of borderCountries(); track borderCountry.alpha3Code) {
+                <a
+                  [routerLink]="getCountryRoute(borderCountry)"
+                  class="border-button"
+                  [attr.aria-label]="'View ' + borderCountry.name"
+                >
+                  {{ borderCountry.name }}
+                </a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
