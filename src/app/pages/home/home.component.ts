@@ -3,13 +3,15 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   inject,
-  signal
+  signal,
+  computed,
+  effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CountryService } from '../../services/country.service';
-import { Country } from '../../models/country.model';
+import { CountryOverview } from '../../models/country.model';
 
 @Component({
   selector: 'app-home',
@@ -18,18 +20,28 @@ import { Country } from '../../models/country.model';
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent implements OnInit {
-  private readonly countryService = inject(CountryService);
+export class HomeComponent {
+  readonly countryService = inject(CountryService);
 
-  protected readonly filteredCountries = this.countryService.filteredCountries;
-  protected readonly uniqueRegions = this.countryService.uniqueRegions;
+  protected readonly countryOverviews = computed(() => {
+    const countries = this.countryService.countryOverviews.value() ?? [];
+    const selectedRegion = this.selectedRegion();
+    let filteredCountries = countries;
+
+    if (selectedRegion) {
+      filteredCountries = countries.filter(country => country.region === selectedRegion);
+    }
+
+    return [...filteredCountries].sort((a, b) => a.name.common.localeCompare(b.name.common));
+  });
   protected readonly searchTerm = signal('');
   protected readonly selectedRegion = signal('');
+  protected readonly uniqueRegions = computed(() => {
+    const countries = this.countryService.countryOverviews.value();
+    return [...new Set(countries?.map(country => country.region) ?? [])];
+  });
 
-  ngOnInit(): void {
-    this.countryService.loadCountries().subscribe();
-  }
-
+  
   protected onSearchChange(value: string): void {
     this.searchTerm.set(value);
     this.countryService.setSearchTerm(value);
@@ -37,11 +49,10 @@ export class HomeComponent implements OnInit {
 
   protected onRegionChange(value: string): void {
     this.selectedRegion.set(value);
-    this.countryService.setRegion(value);
   }
 
-  protected getCountryRoute(country: Country): string[] {
-    return ['/country', country.alpha3Code];
+  protected getCountryRoute(country: CountryOverview): string[] {
+    return ['/country', country.cca3];
   }
 
   protected formatPopulation(population: number): string {

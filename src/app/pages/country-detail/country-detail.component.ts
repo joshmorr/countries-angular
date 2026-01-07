@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   inject,
-  signal,
   computed
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -21,55 +20,38 @@ import { Country } from '../../models/country.model';
 export class CountryDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly countryService = inject(CountryService);
-
-  protected readonly country = signal<Country | null>(null);
-  protected readonly borderCountries = signal<Country[]>([]);
-  protected readonly loading = signal(true);
+  readonly countryService = inject(CountryService);
 
   protected readonly countryDetails = computed(() => {
-    const c = this.country();
+    const c = this.countryService.countryDetails.value();
     if (!c) return null;
 
+    const nativeNameObj = c.name.nativeName;
+    const firstNativeName = nativeNameObj ? Object.values(nativeNameObj)[0]?.common : c.name.common;
+
+    const currenciesObj = c.currencies;
+    const currenciesStr = currenciesObj ? Object.values(currenciesObj).map(curr => curr.name).join(', ') : 'N/A';
+
+    const languagesObj = c.languages;
+    const languagesStr = languagesObj ? Object.values(languagesObj).join(', ') : 'N/A';
+
     return {
-      nativeName: c.nativeName,
+      nativeName: firstNativeName,
       population: this.formatPopulation(c.population),
       region: c.region,
-      subRegion: c.subregion,
-      capital: c.capital || 'N/A',
-      topLevelDomain: c.topLevelDomain.join(', '),
-      currencies: c.currencies?.map(curr => curr.name).join(', ') || 'N/A',
-      languages: c.languages.map(lang => lang.name).join(', ')
+      subRegion: c.subregion || 'N/A',
+      capital: c.capital?.[0] || 'N/A',
+      topLevelDomain: c.tld?.join(', ') || 'N/A',
+      currencies: currenciesStr,
+      languages: languagesStr
     };
   });
 
   ngOnInit(): void {
-    this.countryService.loadCountries().subscribe(() => {
-      // Subscribe to paramMap changes instead of reading snapshot once
-      this.route.paramMap.subscribe(params => {
-        const code = params.get('code');
-        if (code) {
-          this.loadCountry(code);
-        }
-      });
-    });
-  }
-
-  private loadCountry(code: string): void {
-    this.loading.set(true);
-    this.countryService.getCountryByCode(code).subscribe(country => {
-      if (country) {
-        this.country.set(country);
-        if (country.borders && country.borders.length > 0) {
-          this.countryService.getCountriesByCodes(country.borders).subscribe(borders => {
-            this.borderCountries.set(borders);
-          });
-        } else {
-          this.borderCountries.set([]);
-        }
-        this.loading.set(false);
-      } else {
-        this.router.navigate(['/']);
+    this.route.paramMap.subscribe(params => {
+      const code = params.get('code');
+      if (code) {
+        this.countryService.setCountryCode(code);
       }
     });
   }
@@ -78,8 +60,8 @@ export class CountryDetailComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  protected getCountryRoute(country: Country): string[] {
-    return ['/country', country.alpha3Code];
+  protected getCountryRoute(cca3: string): string[] {
+    return ['/country', cca3];
   }
 
   protected formatPopulation(population: number): string {

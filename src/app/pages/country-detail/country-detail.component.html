@@ -1,6 +1,6 @@
-@if (loading()) {
+@if (countryService.countryDetails.isLoading()) {
   <div class="loading">Loading...</div>
-} @else if (country()) {
+} @else if (countryService.countryDetails.value()) {
   <div class="detail-container">
     <button
       type="button"
@@ -26,14 +26,14 @@
 
     <div class="country-detail-content">
       <img
-        [src]="country()!.flags.png"
-        [alt]="country()!.name + ' flag'"
+        [src]="countryService.countryDetails.value()!.flags.png"
+        [alt]="countryService.countryDetails.value()!.name.common + ' flag'"
         class="country-flag-large"
         loading="lazy"
       />
 
       <div class="country-detail-info">
-        <h1 class="country-title">{{ country()!.name }}</h1>
+        <h1 class="country-title">{{ countryService.countryDetails.value()!.name.common }}</h1>
 
         <div class="country-details-grid">
           <div class="details-column">
@@ -75,17 +75,17 @@
           </div>
         </div>
 
-        @if (borderCountries().length > 0) {
+        @if (countryService.countryDetails.value()!.borders && countryService.countryDetails.value()!.borders!.length > 0) {
           <div class="border-countries">
             <span class="border-label">Border Countries:</span>
             <div class="border-buttons">
-              @for (borderCountry of borderCountries(); track borderCountry.alpha3Code) {
+              @for (borderCode of countryService.countryDetails.value()!.borders; track borderCode) {
                 <a
-                  [routerLink]="getCountryRoute(borderCountry)"
+                  [routerLink]="getCountryRoute(borderCode)"
                   class="border-button"
-                  [attr.aria-label]="'View ' + borderCountry.name"
+                  [attr.aria-label]="'View ' + borderCode"
                 >
-                  {{ borderCountry.name }}
+                  {{ borderCode }}
                 </a>
               }
             </div>
@@ -93,5 +93,9 @@
         }
       </div>
     </div>
+  </div>
+} @else if (countryService.countryDetails.error()) {
+  <div class="no-results">
+    <p>Country not found. Please try again.</p>
   </div>
 }

@@ -37,43 +37,45 @@
     </select>
   </div>
 
-  <div class="countries-grid">
-    @for (country of filteredCountries(); track country.alpha3Code) {
-      <a
-        [routerLink]="getCountryRoute(country)"
-        class="country-card"
-        [attr.aria-label]="'View details for ' + country.name"
-      >
-        <img
-          [src]="country.flags.png"
-          [alt]="country.name + ' flag'"
-          class="country-flag"
-          loading="lazy"
-        />
-        <div class="country-info">
-          <h2 class="country-name">{{ country.name }}</h2>
-          <div class="country-details">
-            <p class="country-detail">
-              <span class="detail-label">Population:</span>
-              <span class="detail-value">{{ formatPopulation(country.population) }}</span>
-            </p>
-            <p class="country-detail">
-              <span class="detail-label">Region:</span>
-              <span class="detail-value">{{ country.region }}</span>
-            </p>
-            @if (country.capital) {
+  @if (countryOverviews()) {
+    <div class="countries-grid">
+      @for (country of countryOverviews(); track country.cca3) {
+        <a
+          [routerLink]="getCountryRoute(country)"
+          class="country-card"
+          [attr.aria-label]="'View details for ' + country.name"
+        >
+          <img
+            [src]="country.flags.png"
+            [alt]="country.name.common + ' flag'"
+            class="country-flag"
+            loading="lazy"
+          />
+          <div class="country-info">
+            <h2 class="country-name">{{ country.name.common }}</h2>
+            <div class="country-details">
+              <p class="country-detail">
+                <span class="detail-label">Population:</span>
+                <span class="detail-value">{{ formatPopulation(country.population) }}</span>
+              </p>
+              <p class="country-detail">
+                <span class="detail-label">Region:</span>
+                <span class="detail-value">{{ country.region }}</span>
+              </p>
               <p class="country-detail">
                 <span class="detail-label">Capital:</span>
                 <span class="detail-value">{{ country.capital }}</span>
               </p>
-            }
+            </div>
           </div>
-        </div>
-      </a>
-    } @empty {
-      <div class="no-results">
-        <p>No countries found. Try adjusting your search or filter.</p>
-      </div>
-    }
-  </div>
+        </a>
+      }
+    </div>
+  } @else if (countryService.countryOverviews.error()) {
+    <div class="no-results">
+      <p>No countries found. Try adjusting your search or filter.</p>
+    </div>
+  } @else if (countryService.countryOverviews.isLoading()) {
+    <div class="loading">Loading...</div>
+  }
 </div>
