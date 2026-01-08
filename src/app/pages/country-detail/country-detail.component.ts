@@ -8,7 +8,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CountryService } from '../../services/country.service';
-import { Country } from '../../models/country.model';
 
 @Component({
   selector: 'app-country-detail',

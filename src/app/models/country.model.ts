@@ -6,9 +6,7 @@ export interface NativeName {
 export interface Name {
   common: string;
   official: string;
-  nativeName: {
-    [key: string]: NativeName;
-  };
+  nativeName: Record<string, NativeName>;
 }
 
 export interface Currency {
@@ -26,15 +24,11 @@ export interface Country {
   name: Name;
   tld: string[];
   cca3: string;
-  currencies?: {
-    [key: string]: Currency;
-  };
+  currencies?: Record<string, Currency>;
   capital: string[];
   region: string;
   subregion: string;
-  languages: {
-    [key: string]: string;
-  };
+  languages: Record<string, string>;
   borders?: string[];
   population: number;
   flags: Flags;
