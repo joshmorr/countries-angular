@@ -52,8 +52,4 @@ export class HomeComponent {
   protected getCountryRoute(country: CountryOverview): string[] {
     return ['/country', country.cca3];
   }
-
-  protected formatPopulation(population: number): string {
-    return new Intl.NumberFormat('en-US').format(population);
-  }
 }

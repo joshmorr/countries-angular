@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   inject,
-  computed
+  computed,
+  LOCALE_ID
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -36,7 +37,7 @@ export class CountryDetailComponent implements OnInit {
 
     return {
       nativeName: firstNativeName,
-      population: this.formatPopulation(c.population),
+      population: c.population,
       region: c.region,
       subRegion: c.subregion || 'N/A',
       capital: c.capital?.[0] || 'N/A',
@@ -61,9 +62,5 @@ export class CountryDetailComponent implements OnInit {
 
   protected getCountryRoute(cca3: string): string[] {
     return ['/country', cca3];
-  }
-
-  protected formatPopulation(population: number): string {
-    return new Intl.NumberFormat('en-US').format(population);
   }
 }

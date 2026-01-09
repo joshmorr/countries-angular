@@ -56,7 +56,7 @@
             <div class="country-details">
               <p class="country-detail">
                 <span class="detail-label">Population:</span>
-                <span class="detail-value">{{ formatPopulation(country.population) }}</span>
+                <span class="detail-value">{{ country.population | number }}</span>
               </p>
               <p class="country-detail">
                 <span class="detail-label">Region:</span>
