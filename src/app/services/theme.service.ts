@@ -37,6 +37,9 @@ export class ThemeService {
     if (saved === 'light' || saved === 'dark') {
       return saved;
     }
+
+    if (typeof window.matchMedia !== 'function') return 'light';
+
     return window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
       : 'light';

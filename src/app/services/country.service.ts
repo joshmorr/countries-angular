@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Country, CountryOverview } from '../models/country.model';
+import { CountryApiResponse, CountryOverviewApiResponse } from '../models/country.model';
 import { httpResource } from '@angular/common/http';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class CountryService {
   private readonly searchTerm  = signal<string>('');
   private readonly countryCode = signal<string>('');
 
-  readonly countryOverviews = httpResource<CountryOverview[]>(() => {
+  readonly countryOverviews = httpResource<CountryOverviewApiResponse[]>(() => {
     let url = this.baseUrl;
     if (this.searchTerm()) {
       url += `name/${this.searchTerm()}`;
@@ -21,7 +21,7 @@ export class CountryService {
     return url + `?fields=name,cca3,flags,population,region,capital`;
   });
 
-  readonly countryDetails = httpResource<Country | null>(() => {
+  readonly countryDetails = httpResource<CountryApiResponse | null>(() => {
     const code = this.countryCode();
     if (!code) return undefined;
     return `${this.baseUrl}alpha/${code}?fields=name,cca3,flags,population,region,subregion,capital,tld,currencies,languages,borders`;

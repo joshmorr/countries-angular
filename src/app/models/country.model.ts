@@ -20,7 +20,7 @@ export interface Flags {
   alt?: string;
 }
 
-export interface Country {
+export interface CountryApiResponse {
   name: Name;
   tld: string[];
   cca3: string;
@@ -34,5 +34,15 @@ export interface Country {
   flags: Flags;
 }
 
+export type CountryOverviewApiResponse = Pick<CountryApiResponse, 'name' | 'cca3' | 'flags' | 'population' | 'region' | 'capital'>;
 
-export type CountryOverview = Pick<Country, 'name' | 'cca3' | 'flags' | 'population' | 'region' | 'capital'>;
+export interface MappedCountryDetail {
+  nativeName: string;
+  population: number;
+  region: string;
+  subRegion: string;
+  capital: string;
+  topLevelDomain: string;
+  currencies: string;
+  languages: string;
+}

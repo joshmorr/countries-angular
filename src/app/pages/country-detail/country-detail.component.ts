@@ -3,12 +3,12 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   inject,
-  computed,
-  LOCALE_ID
+  computed
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CountryService } from '../../services/country.service';
+import { MappedCountryDetail } from '../../models/country.model';
 
 @Component({
   selector: 'app-country-detail',
@@ -22,7 +22,7 @@ export class CountryDetailComponent implements OnInit {
   private readonly router = inject(Router);
   readonly countryService = inject(CountryService);
 
-  protected readonly countryDetails = computed(() => {
+  protected readonly countryDetails = computed<MappedCountryDetail | null>(() => {
     const c = this.countryService.countryDetails.value();
     if (!c) return null;
 

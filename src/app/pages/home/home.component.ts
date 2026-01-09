@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CountryService } from '../../services/country.service';
-import { CountryOverview } from '../../models/country.model';
+import { CountryOverviewApiResponse } from '../../models/country.model';
 
 @Component({
   selector: 'app-home',
@@ -39,7 +39,7 @@ export class HomeComponent {
     return [...new Set(countries?.map(country => country.region) ?? [])];
   });
 
-  
+
   protected onSearchChange(value: string): void {
     this.searchTerm.set(value);
     this.countryService.setSearchTerm(value);
@@ -49,7 +49,7 @@ export class HomeComponent {
     this.selectedRegion.set(value);
   }
 
-  protected getCountryRoute(country: CountryOverview): string[] {
+  protected getCountryRoute(country: CountryOverviewApiResponse): string[] {
     return ['/country', country.cca3];
   }
 }
